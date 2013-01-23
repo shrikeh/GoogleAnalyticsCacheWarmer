@@ -1,0 +1,30 @@
+{
+    "client" : {
+        "secrets_file" : "./client_secrets.json",
+        "storage"      : "./analytics.dat"
+    },
+    "account_id"        : "XXXXXXXX",
+    "web_property_id"   : "UA-XXXXXXXX-X",
+    "profile"           : {
+        "id"    : "XXXXXXX"
+    },
+    "max_results" : 100,
+    "headers" : {
+        "host"              : "www.example.org",
+        "x-cache-warmer"    : 1
+    },
+    "servers" : [
+    {
+        "host" : "http://127.0.0.1",
+        "name" : "Localhost"
+    },
+    {
+        "host" : "http://8.8.8.8",
+        "name" : "Google"
+    },
+    {
+        "host" : "http://8.8.4.4",
+        "name" : "Other google"
+    }
+    ]
+}

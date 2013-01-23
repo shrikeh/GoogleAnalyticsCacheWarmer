@@ -1,0 +1,15 @@
+.*
+Desktop.ini
+Session.vim
+Thumbs.db
+*.iml
+*.pyc
+/.git
+/.idea/*
+!/.gitignore
+atlassian-ide-plugin.xml
+
+analytics.dat
+config.json
+client_secrets.json
+

@@ -88,10 +88,8 @@ def parse_results(results):
         try :
             urls = {}
             for page in results.get('rows') :
-            # OK, now go through the list of URLs
+                # OK, now go through the list of URLs
                 page_url = page[0]
-                if len(page_url) > 1 and page_url[1] == '?' :
-                    page_url = '/'
                 urls[page_url] = parse_url(page_url)
             return urls
         except TypeError :
@@ -101,24 +99,6 @@ def parse_results(results):
 
 
 def parse_url(url) :
-    parts = url.split('/')
-    firstPart = parts[1]
-    if ('book' == firstPart) :
-        # an edition page
-        edition_id = parts[3]
-        url = '/edition/' + edition_id
-        if len(parts) == 5 :
-            url = url + '/' + parts[4]
-    elif 'search-results' == firstPart :
-        # search page
-        query = url.split('=')
-        original_search_term = query[1]
-        new_search_term = original_search_term .replace('-', '+')
-        url = '/search?' + new_search_term
-    elif 'anobii' == firstPart :
-        url = '/' + parts[2]
-
-    # This is an edition page
     return url
 
 

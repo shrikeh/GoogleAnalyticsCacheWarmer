@@ -90,19 +90,12 @@ def parse_results(results, filters={}):
             urls = {}
             for page in results.get('rows') :
             # OK, now go through the list of URLs
-                page_url = page[0]
-                #if len(page_url) > 1 and page_url[1] == '?' :
-                #    page_url = '/'
-                urls[page_url] = parse_url(page_url)
+                if page[0]:
+                    urls[page[0]] = page[0]
             return urls
         except TypeError :
             print 'No visits'
     else:
         print 'No results found'
-
-
-# Holder for some additional filtering we can run on the urls later
-def parse_url(url) :
-    return url
 
 

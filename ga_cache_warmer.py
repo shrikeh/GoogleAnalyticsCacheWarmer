@@ -5,9 +5,6 @@ __author__ = 'barneyhanlon'
 import sys, argparse
 from warmer import warmer
 
-def parse_config():
-    config_file
-
 def main(argv):
 
     parser = argparse.ArgumentParser(
@@ -26,11 +23,17 @@ def main(argv):
         help='The profile ID for Google Analytics to query'
     )
     parser.add_argument(
-        '-f',
-        '--file',
+        '-c',
+        '--config',
         metavar='<config_file>',
         default='./config.json',
         help='The config file to use'
+    )
+    parser.add_argument(
+        '-f',
+        '--filters',
+        metavar='<python module>',
+        help='If you wish to run modifications to URLs after collecting, the filter to run'
     )
     parser.add_argument(
         '-a',
@@ -65,13 +68,14 @@ def main(argv):
     args = parser.parse_args()
 
     warmer(
-        config_file=args.file,
+        config_file=args.config,
         storage_file=args.storage,
         secrets_file=args.auth,
         profile_id=args.profile,
         verbosity=args.verbose,
         days=args.days,
         max_results=args.results,
+        filters=args.filters
     )
 
 if __name__ == '__main__':

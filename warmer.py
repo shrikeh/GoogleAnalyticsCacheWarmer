@@ -1,6 +1,6 @@
 __author__ = 'barneyhanlon'
 
-import sys, requests, simplejson
+import sys, requests, simplejson, imp
 from ga import ga
 from multiprocessing import Process
 from traceback import format_exc
@@ -32,8 +32,9 @@ def warmer(
         profile_id,
         verbosity,
         days,
-        max_results
-    ):
+        max_results,
+        filters
+):
 
     config = simplejson.load(open(config_file))
 
@@ -65,18 +66,26 @@ def warmer(
     )
     procs = []
     if urls:
+        moduleobj = None
+        if filters:
+            fileobj, pathname, description = imp.find_module(filters)
+            moduleobj = imp.load_module(filters, fileobj, pathname, description)
+            fileobj.close()
+
         for url in urls:
             target = urls[url]
-
-            p = Process(target=warm_cache, args=(
-                config['servers'],
-                config['headers'],
-                target,
-                verbosity
-            ))
-            procs.append(p)
-            p.start()
-            # Loop through all the processes...
+            if moduleobj:
+                target = moduleobj.parse_url(target)
+            if url:
+                p = Process(target=warm_cache, args=(
+                    config['servers'],
+                    config['headers'],
+                    target,
+                    verbosity
+                    ))
+                procs.append(p)
+                p.start()
+                # Loop through all the processes...
         for p in procs:
             if p.is_alive():
                 # Wait till it's over...

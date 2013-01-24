@@ -1,28 +1,29 @@
+import analytics_auth
+
 __author__ = 'barneyhanlon'
 # -*- coding: utf-8 -*-
 
-import sys
 from datetime import datetime, timedelta
 # import the Auth Helper class
-import analytics_auth
 
 from apiclient.errors import HttpError
 from oauth2client.client import AccessTokenRefreshError
 
-def fetch_urls(config):
+def fetch_urls(storage_file, secrets_file, profile_id, max_results, days, verbosity=0):
     # Step 1. Get an analytics service object.
-    service = analytics_auth.initialize_service(config["client"])
-
+    service = analytics_auth.initialize_service(
+        storage_file=storage_file,
+        secrets_file=secrets_file
+    )
     try:
-        # Step 2. Get the user's first profile ID.
-        profile_id = config['profile']['id']
-
-        if profile_id:
+        if verbosity > 0:
+            print 'Fetching ' + str(max_results) + ' results for the last ' + str(days) + ' days'
             # Step 3. Query the Core Reporting API.
             results = get_results(
                 service=service,
                 profile_id=profile_id,
-                max_results=config['max_results']
+                max_results=max_results,
+                days=days
             )
             # Step 4. Output the results.
             return parse_results(results)
@@ -65,11 +66,11 @@ def fetch_urls(config):
 
 #    return None
 
-def get_results(service, profile_id, max_results=100):
+def get_results(service, profile_id, max_results=100, days=1):
     # Use the Analytics Service Object to query the Core Reporting API
 
     end_date = datetime.now()
-    start_date = end_date - timedelta(days=1)
+    start_date = end_date - timedelta(days=days)
 
     return service.data().ga().get(
         ids='ga:' + profile_id,
@@ -81,15 +82,17 @@ def get_results(service, profile_id, max_results=100):
         max_results=max_results
     ).execute()
 
-def parse_results(results):
+def parse_results(results, filters={}):
     # Print data nicely for the user.
     if results:
         print 'First Profile: %s' % results.get('profileInfo').get('profileName')
         try :
             urls = {}
             for page in results.get('rows') :
-                # OK, now go through the list of URLs
+            # OK, now go through the list of URLs
                 page_url = page[0]
+                #if len(page_url) > 1 and page_url[1] == '?' :
+                #    page_url = '/'
                 urls[page_url] = parse_url(page_url)
             return urls
         except TypeError :
@@ -98,6 +101,7 @@ def parse_results(results):
         print 'No results found'
 
 
+# Holder for some additional filtering we can run on the urls later
 def parse_url(url) :
     return url
 

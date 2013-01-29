@@ -25,6 +25,35 @@ def warm_cache(servers, headers, url, verbosity=0):
         if p.is_alive():
             p.join()
 
+def process(urls, servers, headers, filters, verbosity):
+    procs = []
+    if urls:
+        moduleobj = None
+        if filters:
+            fileobj, pathname, description = imp.find_module(filters)
+            moduleobj = imp.load_module(filters, fileobj, pathname, description)
+            fileobj.close()
+
+        for url in urls:
+            target = urls[url]
+            if moduleobj:
+                target = moduleobj.parse_url(target)
+            if url:
+                p = Process(target=warm_cache, args=(
+                    servers,
+                    headers,
+                    target,
+                    verbosity
+                ))
+                procs.append(p)
+                p.start()
+                # Loop through all the processes...
+        for p in procs:
+            if p.is_alive():
+                # Wait till it's over...
+                p.join()
+
+
 def warmer(
         config_file,
         storage_file,
@@ -64,29 +93,4 @@ def warmer(
         days=days,
         verbosity=verbosity
     )
-    procs = []
-    if urls:
-        moduleobj = None
-        if filters:
-            fileobj, pathname, description = imp.find_module(filters)
-            moduleobj = imp.load_module(filters, fileobj, pathname, description)
-            fileobj.close()
-
-        for url in urls:
-            target = urls[url]
-            if moduleobj:
-                target = moduleobj.parse_url(target)
-            if url:
-                p = Process(target=warm_cache, args=(
-                    config['servers'],
-                    config['headers'],
-                    target,
-                    verbosity
-                    ))
-                procs.append(p)
-                p.start()
-                # Loop through all the processes...
-        for p in procs:
-            if p.is_alive():
-                # Wait till it's over...
-                p.join()
+    process(urls, config['servers'], config['headers'], filters, verbosity)

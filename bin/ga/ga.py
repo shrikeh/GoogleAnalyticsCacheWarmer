@@ -10,6 +10,10 @@ from apiclient.errors import HttpError
 from oauth2client.client import AccessTokenRefreshError
 
 def fetch_urls(storage_file, secrets_file, profile_id, max_results, days, verbosity=0):
+    """
+    Authenticate with Google Analytics using oAuth and fetch the top
+    n popular pages over n days from Google Analytics
+    """
     # Step 1. Get an analytics service object.
     service = analytics_auth.initialize_service(
         storage_file=storage_file,
@@ -67,6 +71,9 @@ def fetch_urls(storage_file, secrets_file, profile_id, max_results, days, verbos
 #    return None
 
 def get_results(service, profile_id, max_results=100, days=1):
+    """
+    Use the Analytics Service Object to query the Core Reporting API
+    """
     # Use the Analytics Service Object to query the Core Reporting API
 
     end_date = datetime.now()
@@ -83,6 +90,9 @@ def get_results(service, profile_id, max_results=100, days=1):
     ).execute()
 
 def parse_results(results, filters={}):
+    """
+    Parse through the URLs collected and create an array
+    """
     # Print data nicely for the user.
     if results:
         print 'First Profile: %s' % results.get('profileInfo').get('profileName')

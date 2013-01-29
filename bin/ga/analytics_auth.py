@@ -9,6 +9,9 @@ from oauth2client.file import Storage
 from oauth2client.tools import run
 
 def prepare_credentials(secrets_file, storage_file):
+    """
+    Prepares the oAuth credentials to use in future calls to Google Analytics
+    """
     # Retrieve existing credendials
     storage = Storage(storage_file)
     credentials = storage.get()
@@ -30,6 +33,9 @@ def prepare_credentials(secrets_file, storage_file):
 
 
 def initialize_service(secrets_file, storage_file):
+    """
+    Build an oAuth call to Google Analytics.
+    """
     # 1. Create an http object
     http = httplib2.Http()
 

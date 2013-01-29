@@ -6,6 +6,9 @@ from multiprocessing import Process
 from traceback import format_exc
 
 def warm_url(url, headers, verbosity=0):
+    """
+    Warms a specific URL on a specific web head
+    """
     try:
         response = requests.get(url, headers=headers)
         if response.status_code != 200 and verbosity > 0:
@@ -15,6 +18,9 @@ def warm_url(url, headers, verbosity=0):
 
 
 def warm_cache(servers, headers, url, verbosity=0):
+    """
+    Takes a target URL and hits every registered load balancer with the given URL
+    """
     procs = []
     for server in servers :
         p = Process(target=warm_url, args=(server['host'] + url, headers, verbosity))
@@ -64,7 +70,10 @@ def warmer(
         max_results,
         filters
 ):
-
+    """
+    Attempts to fetch n URLs from Google Analytics ordered by most visited,
+    and then hits each load balancer with that URL, allowing cache warming
+    """
     config = simplejson.load(open(config_file))
 
     if not config['client']:

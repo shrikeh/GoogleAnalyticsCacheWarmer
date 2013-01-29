@@ -6,7 +6,9 @@ import sys, argparse
 from warmer import warmer
 
 def main(argv):
-
+    """
+    Sets up the main variables from stdin
+    """
     parser = argparse.ArgumentParser(
         description='Fetch the latest n most visited URLs on your site (as reported by Google Analytics), and then pre-warm their cache'
     )
